@@ -34,8 +34,33 @@ class perceptron(object):
                 print "Inputs provided is of invalide size"    
    
 # -------------------------------------------------------------------------------------------------------------#
-# Perceptron to simulate an AND gate
-new_perceptron = perceptron(num_inputs = 2, weight_vector = [-0.8,0.5,0.5])
+# AND function can be simulated using w0 = -0.8, w1=w2 =0.5
 
-new_perceptron.computePerceptronOutput(np.array([0,0]))
-new_perceptron.output
+and_perceptron = perceptron(num_inputs = 2, weight_vector = [-0.8,0.5,0.5])
+
+# Testing all input combinations
+and_perceptron.computePerceptronOutput(np.array([0,0]))
+print and_perceptron.output
+and_perceptron.computePerceptronOutput(np.array([0,1]))
+print and_perceptron.output
+and_perceptron.computePerceptronOutput(np.array([1,0]))
+print and_perceptron.output
+and_perceptron.computePerceptronOutput(np.array([1,1]))
+print and_perceptron.output
+
+# -------------------------------------------------------------------------------------------------------------#
+# OR function can be simulated using w0 = -0.3, w1=w2 =0.5
+
+or_perceptron = perceptron(num_inputs = 2, weight_vector = [-0.3,0.5,0.5])
+
+# Testing all input combinations
+or_perceptron.computePerceptronOutput(np.array([0,0]))
+print or_perceptron.output
+or_perceptron.computePerceptronOutput(np.array([0,1]))
+print or_perceptron.output
+or_perceptron.computePerceptronOutput(np.array([1,0]))
+print or_perceptron.output
+or_perceptron.computePerceptronOutput(np.array([1,1]))
+print or_perceptron.output
+
+
