@@ -63,4 +63,39 @@ print or_perceptron.output
 or_perceptron.computePerceptronOutput(np.array([1,1]))
 print or_perceptron.output
 
+# Implementing Perceptrons to learn other functions (A ^ ~B)
+custom_perceptron = perceptron(num_inputs=2, weight_vector=[-0.4,0.5,-1])
 
+custom_perceptron.computePerceptronOutput(np.array([0,0]))
+print custom_perceptron.output
+custom_perceptron.computePerceptronOutput(np.array([0,1]))
+print custom_perceptron.output
+custom_perceptron.computePerceptronOutput(np.array([1,0]))
+print custom_perceptron.output
+custom_perceptron.computePerceptronOutput(np.array([1,1]))
+print custom_perceptron.output
+
+# Implment XOR function using the custom perceptron defined above
+xor_lyr11 = perceptron(num_inputs=2, weight_vector=[-0.4,0.5,-1])
+xor_lyr12 = perceptron(num_inputs=2, weight_vector=[-0.4,-1,0.5])
+xor_lyr21 = perceptron(num_inputs = 2, weight_vector = [-0.3,0.5,0.5])
+
+xor_lyr11.computePerceptronOutput(np.array([0,0]))
+xor_lyr12.computePerceptronOutput(np.array([0,0]))
+xor_lyr21.computePerceptronOutput(np.array([xor_lyr11.output, xor_lyr12.output]))
+print xor_lyr21.output
+
+xor_lyr11.computePerceptronOutput(np.array([0,1]))
+xor_lyr12.computePerceptronOutput(np.array([0,1]))
+xor_lyr21.computePerceptronOutput(np.array([xor_lyr11.output, xor_lyr12.output]))
+print xor_lyr21.output
+
+xor_lyr11.computePerceptronOutput(np.array([1,0]))
+xor_lyr12.computePerceptronOutput(np.array([1,0]))
+xor_lyr21.computePerceptronOutput(np.array([xor_lyr11.output, xor_lyr12.output]))
+print xor_lyr21.output
+
+xor_lyr11.computePerceptronOutput(np.array([1,1]))
+xor_lyr12.computePerceptronOutput(np.array([1,1]))
+xor_lyr21.computePerceptronOutput(np.array([xor_lyr11.output, xor_lyr12.output]))
+print xor_lyr21.output
