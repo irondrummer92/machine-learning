@@ -8,16 +8,14 @@ import pandas as pd
 
 # Defining a perceptron
 #---------------------------------------------------------------------------------------#
+# Defining a perceptron
+
 class linearPerceptron(object):
-    
-    # Perceptron starts off with random weight vectors if not provided by default
-    # Number of inputs must be equal to number of weights
-    # Some debugging variables have also been captured
     
     def __init__(self, num_inputs, weight_vector = None):
         # Defining the initial perceptron
         self.num_inputs = num_inputs
-        if(weight_vector == None):
+        if(weight_vector is None):
             self.weights = [rd.random() for i in range(num_inputs)]
         else:
             if(len(weight_vector) != num_inputs):
@@ -30,8 +28,8 @@ class linearPerceptron(object):
         self.weightUpdates = []  
         self.minError = None
         self.runIters = 0
+        self.converged = 0
 
-    # Perceptron outputs are a dot product between the inputs and the outputs
     
     def computePerceptronOutput(self, input_vector):
         # Computes the output as a combination of inputs
@@ -43,18 +41,14 @@ class linearPerceptron(object):
             else:
                 print "Inputs provided is of invalide size"
     
-    
-    # Error computation happens based on the formula
-    # E = 1/2 * sum((td - od)^2)
+                
     def computeError(self,input_matrix, target_vector):
         # Compute errors in the current weight training
         
-        # Output vector corresponds to perceptron output for current set of weights
         outputVector = []
         
         nTrain = len(input_matrix) # Size of training input
         
-        # Each input vector is passed through the perceptron
         for input_vector in input_matrix:
             self.computePerceptronOutput(input_vector)
             outputVector = np.append(outputVector,self.output)
@@ -62,70 +56,119 @@ class linearPerceptron(object):
         if(len(target_vector) != nTrain):
             raise Exception("Training Vector provided is not of the same size as inputs")
 
-        # Computation of (td - od) - The absolute error
         error_vector = np.subtract(target_vector,outputVector)
-        # Squaring the error
         error_squared = [x * x for x in error_vector]
-        # SSE for the input dataset
         totalError = sum(error_squared) * 0.5
-        
-        # Compute updateSizes for each iteration
-        # deltaw = sum((td - od) * xid) over d in D
         updateSize = np.dot(error_vector,input_matrix)
         return totalError,updateSize
     
-    def trainBatchGradientDescent(self, input_matrix, target_vector, alpha = 0.01, nIter = 100):
+    
+    def trainGradientDescent(self, input_matrix, target_vector, alpha = 0.01, nIter = 100, method = "batch"):
+        
+        
         # Batch Gradient Descent is performed on the linear Perceptron given
         # the input matrix and a target vector to be learnt at learning Rate (alpha)
         # The batch descent is by default set to run only 100 iterations
-        print "Training with Batch Gradient Descent....! Plz Wait..!"
-        
-        # Input matrix is number_of_inputs X no. of training examples
-        self.weightUpdates = np.append(self.weightUpdates,self.weights)
-        nInput = self.num_inputs
-        
-        # Minerror for the initial iteration
-        self.minError,updateSizes = self.computeError(input_matrix = input_matrix,target_vector = target_vector)
-        self.iterError = np.append(self.iterError,self.minError)
-        
-        # Convergence flag
-        converged = 0
-        
-        # When nIter runs out without convergence, the current weights are considered final
-        for i in range(nIter):
-            outputVector = np.array([])
-            
-            totalError,updateSizes = self.computeError(input_matrix,target_vector)
-            
-            # Deltaweights for each weight
-            # alpha (or eta) is the learning rate
-            deltaWeights = alpha * updateSizes
-            
-            # UpdateWeights
-            oldWeights = self.weights
-            newWeights = np.add(self.weights,deltaWeights)
-            self.weights = newWeights
-            
-            # After update, if the errors are not reducing, convergence is confirmed
-            totalError,updateSizes = self.computeError(input_matrix,target_vector)
-            
-            if(totalError >= self.minError):
-                converged = 1
-                self.runIters = i
-                self.weights = oldWeights
-                print "Converged.....!"
-                print self.weights
-                return
-            else:
-                self.minError = totalError
+        if(method=="batch"):
+            print "Training with Batch Gradient Descent....! Plz Wait..!"
+
+            # Input matrix is number_of_inputs X no. of training examples
+
+            self.weightUpdates = np.append(self.weightUpdates,self.weights)
+
+            nInput = self.num_inputs
+
+            self.minError,updateSizes = self.computeError(input_matrix = input_matrix,target_vector = target_vector)
+            self.iterError = np.append(self.iterError,self.minError)
+
+            for i in range(nIter):
+
+                totalError,updateSizes = self.computeError(input_matrix,target_vector)
+
+                deltaWeights = alpha * updateSizes
+
+                # UpdateWeights
+                oldWeights = self.weights
+                newWeights = np.add(self.weights,deltaWeights)
                 self.weights = newWeights
-                self.weightUpdates = np.append(self.weightUpdates,self.weights)
-                self.iterError = np.append(self.iterError,self.minError)
 
+                totalError,updateSizes = self.computeError(input_matrix,target_vector)
+
+                if(totalError >= self.minError):
+                    self.converged = 1
+                    self.runIters = i
+                    self.weights = oldWeights
+                    print "Converged.....!"
+                    print self.weights
+                    return
+                else:
+                    self.minError = totalError
+                    self.weights = newWeights
+                    self.weightUpdates = np.append(self.weightUpdates,self.weights)
+                    self.iterError = np.append(self.iterError,self.minError)
+
+
+            print "Ran out of iterations without converging......! Tough luck matey...!"
+            print self.weights
+    
+        # For stochastic gradient descent
+        elif(method == "incremental"):
+            
+            print "Training with Stochastic Gradient Descent....! Plz Wait..!" 
+            
+            self.weightUpdates = np.append(self.weightUpdates,self.weights)
+
+            nInput = self.num_inputs
+            nTrain = len(input_matrix)
+            
+            self.minError,updateSizes = self.computeError(input_matrix = input_matrix,target_vector = target_vector)
+            self.iterError = np.append(self.iterError,self.minError)
+            
+            oldWeights = self.weights
+            
+            # Run through iterations
+            for i in range(nIter):
+                
+                # Run through all training examples
+                for j in range(nTrain):
+                    
+                    input_vector = input_matrix[j]
+                    current_output = target_vector[j]
+                    
+                    newWeights = self.weights
+                    
+                    self.computePerceptronOutput(input_vector)
+                    deltaWeights = alpha * (current_output - self.output) * input_vector
+
+                    newWeights = np.add(newWeights,deltaWeights)
+                    
+                    self.weights = newWeights
+
+                totalError,updateSizes = self.computeError(input_matrix,target_vector)
+
+                if(totalError > self.minError):
+                    self.converged = 1
+                    self.runIters = i
+                    self.weights = oldWeights
+                    self.minError = totalError
+                    self.iterError = np.append(self.iterError,totalError)
+                    self.weightUpdates = np.append(self.weightUpdates,self.weights)
+                    print "Converged.....!"
+                    print self.weights
+                    return
+
+                else:
+                    self.minError = totalError
+                    self.weightUpdates = np.append(self.weightUpdates,self.weights)
+                    self.iterError = np.append(self.iterError,self.minError)
+
+            print "Ran out of iterations without converging......! Tough luck matey...!"
+            print self.weights
         
-        print "Ran out of iterations without converging......! Tough luck matey...!"
-        print self.weights          
-
+        
+        else:
+            
+            print "No valid method provided...! Must be either 'stochastic' or 'batch'"
 #----------------------------------------------------------------------------------------------#  
 
 # Generate training examples to learn the function
@@ -172,12 +215,18 @@ print len(testOutput)
 
 #--------------------------------------------------------------------------------------------------#
 
-# Initialize a perceptron and run batch gradient descent
-lp1 = linearPerceptron(num_inputs=2)
-lp1.trainBatchGradientDescent(alpha=0.001,input_matrix=train,target_vector=trainOutput,nIter=100)
+# Training lp1 with Batch Gradient Descent
+lp1 = linearPerceptron(num_inputs=2,weight_vector=np.array([0,0]))
+lp1.trainGradientDescent(alpha=0.001,input_matrix=train,target_vector=trainOutput,nIter=100,method="batch")
 
-# Print all diagnostics 
+
+# Training lp2 with Incremental Gradient Descent
+lp2 = linearPerceptron(num_inputs=2)
+lp2.trainGradientDescent(alpha=0.001,input_matrix=train,target_vector=trainOutput,nIter=100,method="incremental")
+
 print lp1.iterError
-print lp1.runIters
+lp1.runIters
 
-print lp1.computeError(input_matrix=test,target_vector=testOutput)[0]
+print lp2.iterError
+
+lp2.runIters
