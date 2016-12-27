@@ -14,3 +14,6 @@ http://personal.disco.unimib.it/Vanneschi/McGrawHill_-_Machine_Learning_-Tom_Mit
 
 12/26 - Link to Pattern Recognition and Machine Learning by Christopher Bishop
 http://users.isr.ist.utl.pt/~wurmd/Livros/school/Bishop%20-%20Pattern%20Recognition%20And%20Machine%20Learning%20-%20Springer%20%202006.pdf
+
+12/27 - Link to Patter Recognition by SERGIOS THEODORIDIS KONSTANTINOS KOUTROUMBAS 
+http://www.manalhelal.com/Books/F2014/Pattern%20Recognition_2003.pdf
