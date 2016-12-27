@@ -95,6 +95,15 @@ dataTrain <- trainFinal[trn,c("ItemWeightImputed",
                               "Outlet_Location_Type",
                               "Item_Outlet_Sales")]
 
+dataTrain$ItemWeightImputed <- (dataTrain$ItemWeightImputed - mean(dataTrain$ItemWeightImputed))/sd(dataTrain$ItemWeightImputed)
+dataTrain$Item_Visibility <- (dataTrain$Item_Visibility - mean(dataTrain$Item_Visibility))/sd(dataTrain$Item_Visibility)
+dataTrain$Item_MRP <- (dataTrain$Item_MRP - mean(dataTrain$Item_MRP))/sd(dataTrain$Item_MRP)
+# dataTrain$Outlet_Establishment_Year <- (dataTrain$Outlet_Establishment_Year - mean(dataTrain$Outlet_Establishment_Year))/sd(dataTrain$Outlet_Establishment_Year)
+maxSales <- max(dataTrain$Item_Outlet_Sales)
+minSales <- min(dataTrain$Item_Outlet_Sales)
+dataTrain$Item_Outlet_Sales <- (dataTrain$Item_Outlet_Sales - minSales)/(maxSales - minSales)
+
+
 dataTrain$ItemFatCleaned <- as.factor(dataTrain$ItemFatCleaned)
 dataTrain$Item_Type <- as.factor(dataTrain$Item_Type)
 dataTrain$OutletSizeImputed <- as.factor(dataTrain$OutletSizeImputed)
@@ -110,6 +119,12 @@ dataTest <- trainFinal[tst,c("ItemWeightImputed",
                              "Outlet_Establishment_Year",
                              "Outlet_Location_Type",
                              "Item_Outlet_Sales")]
+
+dataTest$ItemWeightImputed <- (dataTest$ItemWeightImputed - mean(dataTest$ItemWeightImputed))/sd(dataTest$ItemWeightImputed)
+dataTest$Item_Visibility <- (dataTest$Item_Visibility - mean(dataTest$Item_Visibility))/sd(dataTest$Item_Visibility)
+dataTest$Item_MRP <- (dataTest$Item_MRP - mean(dataTest$Item_MRP))/sd(dataTest$Item_MRP)
+dataTest$Outlet_Establishment_Year <- (dataTest$Outlet_Establishment_Year - mean(dataTest$Outlet_Establishment_Year))/sd(dataTest$Outlet_Establishment_Year)
+
 
 dataTest$ItemFatCleaned <- as.factor(dataTest$ItemFatCleaned)
 dataTest$Item_Type <- as.factor(dataTest$Item_Type)
@@ -132,3 +147,39 @@ dataValidation$percentageDeviation <- dataValidation$deviation/dataValidation$It
 mean(dataValidation$deviation)
 # %MAPE
 mean(dataValidation$percentageDeviation)
+
+
+library(neuralnet)
+
+modelTrain <- model.matrix(  ~ Item_Outlet_Sales + ItemWeightImputed + ItemFatCleaned + Item_Visibility + 
+    Item_Type + Item_MRP + OutletSizeImputed + Outlet_Establishment_Year + 
+    Outlet_Location_Type, data = dataTrain)
+
+dataNames <- colnames(modelTrain)
+dataNames <- gsub(dataNames,pattern = " ",replacement = "")
+nnFormula <- as.formula(paste("Item_Outlet_Sales ~ ", 
+                              paste(dataNames[!dataNames %in% c("Item_Outlet_Sales","(Intercept)")],
+                                    collapse = "+")))
+colnames(modelTrain) <- dataNames
+
+nnModel <- neuralnet(data = modelTrain,
+                     formula = nnFormula, 
+                     hidden = 3,
+                     learningrate = 0.00001,
+                     algorithm = "backprop",
+                     act.fct = "logistic")
+
+plot(nnModel)
+
+dataValidation <- dataTest
+modelTest <- model.matrix(  ~ ItemWeightImputed + ItemFatCleaned + Item_Visibility + 
+                              Item_Type + Item_MRP + OutletSizeImputed + Outlet_Establishment_Year + 
+                              Outlet_Location_Type, data = dataTest)
+
+modelTest <- modelTest[,-1]
+
+modelComputation <- compute(x = nnModel,covariate = modelTest)
+
+# Computing metrics of Fit
+dataValidation$deviation <- abs(dataValidation$Item_Outlet_Sales - dataValidation$predictedSales)
+dataValidation$percentageDeviation <- dataValidation$deviation/dataValidation$Item_Outlet_Sales
