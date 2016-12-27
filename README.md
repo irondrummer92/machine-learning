@@ -17,3 +17,9 @@ http://users.isr.ist.utl.pt/~wurmd/Livros/school/Bishop%20-%20Pattern%20Recognit
 
 12/27 - Link to Patter Recognition by SERGIOS THEODORIDIS KONSTANTINOS KOUTROUMBAS 
 http://www.manalhelal.com/Books/F2014/Pattern%20Recognition_2003.pdf
+
+12/27 - Added Stochasticity to selection of samples for training in incremental gradient descent.
+To Do:
+linearPerceptron - v2.py
+  1. Error plots
+  2. Iteration errors on training and test sets
