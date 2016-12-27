@@ -23,3 +23,5 @@ To Do:
 linearPerceptron - v2.py
   1. Error plots
   2. Iteration errors on training and test sets
+
+12/27 - Added R script for Random Forests based prediction of sales (Analytics Vidhya)
