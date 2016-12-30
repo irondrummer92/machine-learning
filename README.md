@@ -27,3 +27,6 @@ linearPerceptron - v2.py
 12/27 - Added R script for Random Forests based prediction of sales (Analytics Vidhya)
 
 12/28 - Script moved to Analytics Vidhya Repository
+
+12/30 - Linear Perceptron script includes plotting of error surfaces
+Next steps - Add iteration error plots for train and validation tests
