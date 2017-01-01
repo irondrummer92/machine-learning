@@ -30,3 +30,5 @@ linearPerceptron - v2.py
 
 12/30 - Linear Perceptron script includes plotting of error surfaces
 Next steps - Add iteration error plots for train and validation tests
+
+01/01 - Added code for neural nets. Need to complete derivartions for batch and stochastic backprop algorithms
