@@ -136,10 +136,8 @@ class neuralNet(object):
     
         print "Backpropagating... Wait...!"
         
- #---------------------------------------------------------------------------------#
- 
- nn1 = neuralNet([3,3,1])
- 
- nn1.forwardPropagate([1 for i in range(3)])
- 
- 
+#---------------------------------------------------------------------------------#
+
+nn1 = neuralNet([3,3,1])
+
+nn1.forwardPropagate([1 for i in range(3)])
