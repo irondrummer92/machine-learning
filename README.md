@@ -37,3 +37,6 @@ Next steps - Add iteration error plots for train and validation tests
 
 Andrej Karpathy - Neural Nets videos
 https://www.youtube.com/playlist?list=PLLvH2FwAQhnpj1WEB-jHmPuUeQ8mX-XXG
+
+The Deep Learning Book - Goodfellow, Bengio and Courville
+http://www.deeplearningbook.org/
