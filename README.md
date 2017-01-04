@@ -34,3 +34,6 @@ Next steps - Add iteration error plots for train and validation tests
 01/01 - Added code for neural nets. Need to complete derivartions for batch and stochastic backprop algorithms
 
 01/02 - Added new notebook with neural nets newer implementation. Layers are now built as objects and have forward and backward processes of their own
+
+Andrej Karpathy - Neural Nets videos
+https://www.youtube.com/playlist?list=PLLvH2FwAQhnpj1WEB-jHmPuUeQ8mX-XXG
