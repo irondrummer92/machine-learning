@@ -4,3 +4,5 @@
 
 01/08 - Revamped structure of codes. Neural nets with sigmoid activation complete
 Next steps - Test on MNIST dataset
+
+01/10 - All operations vectorized. Accuracy on MNIST dataset 91.5%
