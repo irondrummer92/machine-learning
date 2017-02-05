@@ -19,7 +19,7 @@ Deep learning book is an online book treating neural nets and deep learning. Mat
 ### Videos:
 
 #### Neural Nets - Andrej Karpathy
-[Youtube](https://www.youtube.com/playlist?list=PLLvH2FwAQhnpj1WEB-jHmPuUeQ8mX-XXG)
+[Youtube](https://www.youtube.com/playlist?list=PLLvH2FwAQhnpj1WEB-jHmPuUeQ8mX-XXG)<br/>
 [Lecture Notes](http://cs231n.github.io/)
 
 #### MIT CS 9.520 - Introduction to statistical learning and applications
