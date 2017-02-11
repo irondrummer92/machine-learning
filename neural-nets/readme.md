@@ -6,3 +6,5 @@
 Next steps - Test on MNIST dataset
 
 01/10 - All operations vectorized. Accuracy on MNIST dataset 91.5%
+
+02/11 - Added Regularization and He et al init for weights with Relu activations. Best accuracy with batch size of 5 and 20000 epochs. 8000 training MNIST Dataset
