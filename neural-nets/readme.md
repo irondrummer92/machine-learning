@@ -10,3 +10,5 @@ Next steps - Test on MNIST dataset
 02/11 - Added Regularization and He et al init for weights with Relu activations. Best accuracy with batch size of 5 and 20000 epochs. 8000 training MNIST Dataset
 
 02/12 - NAG/Momentum Updates added to latest version of Neural Net ipynb
+
+02/22 - Adam Optimization
