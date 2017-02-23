@@ -12,3 +12,5 @@ Next steps - Test on MNIST dataset
 02/12 - NAG/Momentum Updates added to latest version of Neural Net ipynb
 
 02/22 - Adam Optimization
+
+02/23 - Adam with Bias correction
