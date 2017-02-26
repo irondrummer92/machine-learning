@@ -14,3 +14,5 @@ Next steps - Test on MNIST dataset
 02/22 - Adam Optimization
 
 02/23 - Adam with Bias correction
+
+02/26 - Adam with Bias Correction (Fixed) and Dropout (inverse)
