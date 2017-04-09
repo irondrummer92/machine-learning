@@ -1,3 +1,5 @@
+### Documenting list of Papers to read:
+
 [Understanding the difficulty of training deep feedforward neural networks](http://jmlr.org/proceedings/papers/v9/glorot10a/glorot10a.pdf)
 <br/><br/>
 <strike>[Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift](https://arxiv.org/pdf/1502.03167.pdf)</strike>
