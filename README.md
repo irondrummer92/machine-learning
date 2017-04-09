@@ -13,3 +13,6 @@ This is a repository that has the codes developed for different machine learning
 - <strike>Implmenet Tic Tac Toe player powered by linear perceptron</strike>
 - <strike>Learn CNNs through Tensorflow</strike>
 - Implment Neural Style transfer in Tensorflow
+
+
+### OPEN PAPERS TO READ
