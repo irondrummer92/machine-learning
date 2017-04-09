@@ -4,6 +4,8 @@
 <br/><br/>
 <strike>[Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift](https://arxiv.org/pdf/1502.03167.pdf)</strike>
 <br/><br/>
+[A Neural Algorithm of Artistic Style](https://arxiv.org/abs/1508.06576)
+<br/><br/>
 [Batch Renormalization](https://arxiv.org/pdf/1702.03275.pdf)
 <br/><br/>
 [Opening the Black Box of Deep Neural Nets](https://arxiv.org/pdf/1703.00810.pdf)
