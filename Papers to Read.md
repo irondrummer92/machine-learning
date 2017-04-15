@@ -2,6 +2,8 @@
 
 [Understanding the difficulty of training deep feedforward neural networks](http://jmlr.org/proceedings/papers/v9/glorot10a/glorot10a.pdf)
 <br/><br/>
+<strike>[Regularization through Random Noise - Bishop](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/bishop-tikhonov-nc-95.pdf)</strike>
+<br/><br/>
 <strike>[Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift](https://arxiv.org/pdf/1502.03167.pdf)</strike>
 <br/><br/>
 [Deep Convolutional Neural Nets - AlexNet](https://www.nvidia.cn/content/tesla/pdf/machine-learning/imagenet-classification-with-deep-convolutional-nn.pdf)
