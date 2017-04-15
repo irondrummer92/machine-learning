@@ -6,7 +6,7 @@
 <br/><br/>
 <strike>[Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift](https://arxiv.org/pdf/1502.03167.pdf)</strike>
 <br/><br/>
-[Deep Convolutional Neural Nets - AlexNet](https://www.nvidia.cn/content/tesla/pdf/machine-learning/imagenet-classification-with-deep-convolutional-nn.pdf)
+<strike>[Deep Convolutional Neural Nets - AlexNet](https://www.nvidia.cn/content/tesla/pdf/machine-learning/imagenet-classification-with-deep-convolutional-nn.pdf)</strike>
 <br/><br/>
 [A Neural Algorithm of Artistic Style](https://arxiv.org/abs/1508.06576)
 <br/><br/>
