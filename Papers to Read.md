@@ -8,15 +8,15 @@
 <br/><br/>
 <strike>[Deep Convolutional Neural Nets - AlexNet](https://www.nvidia.cn/content/tesla/pdf/machine-learning/imagenet-classification-with-deep-convolutional-nn.pdf)</strike>
 <br/><br/>
-[A Neural Algorithm of Artistic Style](https://arxiv.org/abs/1508.06576)
+<strike>[A Neural Algorithm of Artistic Style](https://arxiv.org/abs/1508.06576)</strike>
 <br/><br/>
-[Batch Renormalization](https://arxiv.org/pdf/1702.03275.pdf)
+<strike>[Batch Renormalization](https://arxiv.org/pdf/1702.03275.pdf)</strike>
 <br/><br/>
 [Opening the Black Box of Deep Neural Nets](https://arxiv.org/pdf/1703.00810.pdf)
 <br/><br/>
 <strike>[Dropout Regularization](http://www.cs.toronto.edu/~rsalakhu/papers/srivastava14a.pdf)</strike>
 <br/><br/>
-[Shattered Gradients](https://arxiv.org/pdf/1702.08591.pdf)
+<strike>[Shattered Gradients](https://arxiv.org/pdf/1702.08591.pdf)</strike>
 <br/><br/>
 [Dropout Training as Adaptive Regularization](http://papers.nips.cc/paper/4882-dropout-training-as-adaptive-regularization.pdf)
 <br/><br/>
@@ -27,3 +27,5 @@
 [Practical Recommendations for Gradient-Based Training of Deep Architectures](https://arxiv.org/pdf/1206.5533v2.pdf)
 <br/><br/>
 [ImageNet Classification with Deep Convolutional Neural Networks](http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf)
+<br/><br/>
+[Normalizing the Normalizers](https://arxiv.org/pdf/1611.04520.pdf)
