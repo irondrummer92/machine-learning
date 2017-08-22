@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import pickle as pk
 
 # importing some time series data
-f = open("/home/ishwar/workspace/Data/clim-data/monthly_precip.txt")
+f = open("/home/mudraje/workspace/data/clim-data/monthly_precip.txt")
 
 txt = f.readlines()
 # Time series from 190101 to 201412
@@ -59,9 +59,35 @@ print cor
 prec_treat = prec_annual - prec_annual.mean()
 prec_acf = np.correlate(prec_treat, prec_treat, "full")
 prec_acf = prec_acf/prec_acf.max()
+
+r = 10
+prec_res = prec_annual[::r]
+yr_annual = np.arange(0, len(prec_annual), 1.)
+yr_res = yr_annual[::r]
+
+# Plot the annual precipitation and the 7 year cycle
+#plt.plot(yr_annual, prec_annual, 'b*-', markersize = 5, linewidth = 1.5)
+#plt.plot(yr_res, prec_res, 'r--', linewidth = 1.0)
+#plt.ylim([0, 10])
+#plt.show()
+#
+
+# Plot rainfall distribution
+plt.hist(prec_treat, np.arange(-4.0, 4.0, 1))
+plt.show()
+
+# Plot rf anomly and 7 year cycle
+plt.plot(yr_annual, prec_treat, 'b*-', markersize = 5, linewidth = 1.5)
+plt.plot(yr_res, prec_treat[::r], 'r--', linewidth = 1.0)
+plt.ylim([-4, 4])
+plt.show()
+
+
+
 x_ax = np.arange(-113, 114, 1.)
 
-plt.plot(x_ax, prec_acf, 'bo-', linewidth = 1.5, markersize = 10)
-plt.xlim([-20, 20])
+plt.plot(x_ax, prec_acf, 'bo-', linewidth = 1.5, markersize = 5)
+plt.xlim([-40, 40])
 plt.title("Autocorrelation function for Annual Precipitation")
 plt.show()
+
