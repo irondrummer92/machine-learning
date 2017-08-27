@@ -3,91 +3,88 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pickle as pk
+from scipy.fftpack import fft, ifft
+from scipy import signal
+
+#===================== Setup functions =======================#
+
+# ==== ACF =======
+
+def plt_acf(ts_data, title = "Autocorrelation", lims = [0, 40], remove_mean = True):
+
+    # Check if rainfall data is autoregressive (Annual data)
+    # Check autocorrelation of the series prec_annual with differen lag values
+    if(remove_mean):
+        ts_treat = ts_data - ts_data.mean()
+    else:
+        ts_treat = ts_data
+    ts_acf = np.correlate(ts_treat, ts_treat, "full")
+    ts_acf = ts_acf/ts_acf.max()
+    
+    # Show autocorrelation in monthly rainfall
+    # Plot only positive half
+    acf_len = len(ts_acf)/2
+    x_ax = np.arange(1, acf_len+1, 1)
+    y_ax = ts_acf[(acf_len + 1):len(ts_acf)]
+    plt.plot(x_ax, y_ax, 'bo-', linewidth = 1.5, markersize = 5)
+    plt.xlim(lims)
+    plt.title(title)
+    plt.show()
+    
+
+
 
 # importing some time series data
-f = open("/home/mudraje/workspace/data/clim-data/monthly_precip.txt")
+f = open("/home/ishwar/workspace/datasets/clim-data/monthly_precip.txt")
 
 txt = f.readlines()
 # Time series from 190101 to 201412
 precip_ts = np.array([float(mon.replace("\n","")) for mon in txt])
 
-tm_arr = np.empty(len(precip_ts), np.int32)
-tm = np.arange(1901, 2015)
-print tm
-j = 0
-for i in range(len(tm)):
-    tm_arr[j:j+12] = tm[i] * 100 + np.arange(1, 13)
-    j = j + 12
+# prec_y = np.append(precip_ts[1:len(precip_ts)],0)
 
-# remove seasonal fluctuations from the plot
-# Get monthly mean of the data and remove to get anomaly
-prec_mon = precip_ts.reshape(len(precip_ts)/12,12)
-mon_clim = prec_mon.mean(axis = 0)
+# plt_acf(precip_ts, title = "Autocorrelation function for monthly rainfall")
 
-print(mon_clim)
+# Data has 12 month seasonal cyclicity. 
+# Option 1: removing the monthly climatology and recalculating the ACF on anomalies
+prec_mon = precip_ts.reshape([len(precip_ts)/12, 12])
+x_ax = np.arange(1901, 2015, 1)
 
-# Get only JJAS
-tm_jjas = precip_ts[[t % 100 in [6,7,8,9] for t in tm_arr]]
-print len(tm_jjas)
+prec_jjas2d = prec_mon[:,5:9]
+prec_jjas = prec_jjas2d.reshape(prec_jjas2d.shape[0] * 4)
+print prec_jjas.shape
 
-# convert to 4D dataset
-prec_jjas = tm_jjas.reshape(len(tm), 4)
+# mon_clm = prec_mon.mean(axis = 0)
+# clm_conf = np.tile(mon_clm, len(precip_ts)/12)
+# prec_anom = precip_ts - clm_conf
 
-# Plot the 4 time series (JJAS)
-lbs = ("June", "July", "August", "September")
-lns = ("ro-", "bs-", "gh-", "mD-")
-#for i, ts in enumerate(prec_jjas.T):
-#    plt.plot(tm, ts, lns[i], label = lbs[i], linewidth = 1.5, markersize = 4.0)
-#    plt.xticks(np.arange(1901, 2015, 10))
-#    plt.xlim([1901, 2014])
-#    plt.legend()
-#    plt.show()
+# run acf and plot it first without removing mean and then removing mean
+# plt_acf(prec_anom, title = "Autocorrelation Function for monthly anomaly", remove_mean = False)
 
-# Calculate JJAS average rainfall for all 114 years
-prec_annual = np.mean(prec_jjas, axis = 1)
+# plt.plot(precip_ts)
+# plt.show()
+ 
+# Calculate annual average
+# annual_avg = prec_jjas2d.sum(axis = 1)
 
-prec_y = np.append(prec_annual[1:len(prec_annual)],0)
-prec_data = np.append(prec_jjas, prec_annual.reshape(len(tm), 1), axis = 1)
-prec_data = np.append(prec_data, prec_y.reshape(len(tm), 1), axis = 1)
+# JJAS rainfall
+plt_acf(prec_jjas, lims = [1, 80], title = "JJAS rainfall ACF", remove_mean = True)
 
-# Calculate if current values can be correlated with t+1 values
-cor = np.corrcoef(prec_data.T)
-print cor
+# Plot low pass and try extracting ACF from low frequency values
+# b, a = signal.butter(4, 0.4, 'low', output = 'ba')
+# annual_filt = signal.filtfilt(b, a, annual_avg)
+# plt.plot(x_ax, annual_avg, 'bo-')
+# plt.plot(x_ax, annual_filt, 'rs-')
+# plt.show()
 
-# Check if rainfall data is autoregressive (Annual data)
-# Check autocorrelation of the series prec_annual with differen lag values
-prec_treat = prec_annual - prec_annual.mean()
-prec_acf = np.correlate(prec_treat, prec_treat, "full")
-prec_acf = prec_acf/prec_acf.max()
-
-r = 10
-prec_res = prec_annual[::r]
-yr_annual = np.arange(0, len(prec_annual), 1.)
-yr_res = yr_annual[::r]
-
-# Plot the annual precipitation and the 7 year cycle
-#plt.plot(yr_annual, prec_annual, 'b*-', markersize = 5, linewidth = 1.5)
-#plt.plot(yr_res, prec_res, 'r--', linewidth = 1.0)
-#plt.ylim([0, 10])
-#plt.show()
-#
-
-# Plot rainfall distribution
-plt.hist(prec_treat, np.arange(-4.0, 4.0, 1))
+# Plot low pass and try extracting ACF from low frequency values
+b, a = signal.butter(4, 0.2, 'low', output = 'ba')
+annual_filt = signal.filtfilt(b, a, prec_jjas)
+plt.plot(prec_jjas, 'bo-')
+plt.plot(annual_filt, 'rs-')
 plt.show()
 
-# Plot rf anomly and 7 year cycle
-plt.plot(yr_annual, prec_treat, 'b*-', markersize = 5, linewidth = 1.5)
-plt.plot(yr_res, prec_treat[::r], 'r--', linewidth = 1.0)
-plt.ylim([-4, 4])
-plt.show()
+# ACF of filtered precipitation data
+plt_acf(annual_filt, lims = [1,80], title = "Filtered Response ACF", remove_mean = True)
 
-
-
-x_ax = np.arange(-113, 114, 1.)
-
-plt.plot(x_ax, prec_acf, 'bo-', linewidth = 1.5, markersize = 5)
-plt.xlim([-40, 40])
-plt.title("Autocorrelation function for Annual Precipitation")
-plt.show()
-
+# Use MA smoothing to remove seasonal variations
