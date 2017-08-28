@@ -3,12 +3,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pickle as pk
-from scipy.fftpack import fft, ifft
-from scipy import signal
+from sklearn import linear_model
 
 #===================== Setup functions =======================#
 
-# ==== ACF =======
+# ===================== ACF ====================== #
 
 def plt_acf(ts_data, title = "Autocorrelation", lims = [0, 40], remove_mean = True):
 
@@ -30,8 +29,43 @@ def plt_acf(ts_data, title = "Autocorrelation", lims = [0, 40], remove_mean = Tr
     plt.xlim(lims)
     plt.title(title)
     plt.show()
-    
 
+
+# ========== Deseasonalize time series ============ #
+
+def deseasonalize_ts(ts_data, w_size):
+
+    t = len(ts_data)
+    
+    # Empty array for storing deseasonalize data
+    trend_ts = np.zeros((t-w_size+1))
+    
+    k = 0
+    
+    # For all time series
+    while (k + w_size) <= t:
+        trend_ts[k] = ts_data[k:(k+w_size)].mean()
+        k+=1
+
+    seas_ts = ts_data[(w_size-1):] - trend_ts
+    return trend_ts, seas_ts
+
+
+# ================ Scatter lag ===================== #
+
+def scatter_lag(ts_data, lag = 1, plot_scatter = True):
+
+    t = len(ts_data)
+
+    ts_lag = ts_data[lag:]
+    ts = ts_data[:(t-lag)]
+
+    if(plot_scatter):
+        plt.title("Scatter plots of ts and " + str(lag) + " lagged ts")    
+        plt.scatter(ts_lag, ts)
+        plt.show()
+
+    return ts, ts_lag
 
 
 # importing some time series data
@@ -41,50 +75,40 @@ txt = f.readlines()
 # Time series from 190101 to 201412
 precip_ts = np.array([float(mon.replace("\n","")) for mon in txt])
 
-# prec_y = np.append(precip_ts[1:len(precip_ts)],0)
+# Deseasonalize the time series
+trnd, seas = deseasonalize_ts(precip_ts, 12)
 
-# plt_acf(precip_ts, title = "Autocorrelation function for monthly rainfall")
-
-# Data has 12 month seasonal cyclicity. 
-# Option 1: removing the monthly climatology and recalculating the ACF on anomalies
-prec_mon = precip_ts.reshape([len(precip_ts)/12, 12])
-x_ax = np.arange(1901, 2015, 1)
-
-prec_jjas2d = prec_mon[:,5:9]
-prec_jjas = prec_jjas2d.reshape(prec_jjas2d.shape[0] * 4)
-print prec_jjas.shape
-
-# mon_clm = prec_mon.mean(axis = 0)
-# clm_conf = np.tile(mon_clm, len(precip_ts)/12)
-# prec_anom = precip_ts - clm_conf
-
-# run acf and plot it first without removing mean and then removing mean
-# plt_acf(prec_anom, title = "Autocorrelation Function for monthly anomaly", remove_mean = False)
-
-# plt.plot(precip_ts)
-# plt.show()
- 
-# Calculate annual average
-# annual_avg = prec_jjas2d.sum(axis = 1)
-
-# JJAS rainfall
-plt_acf(prec_jjas, lims = [1, 80], title = "JJAS rainfall ACF", remove_mean = True)
-
-# Plot low pass and try extracting ACF from low frequency values
-# b, a = signal.butter(4, 0.4, 'low', output = 'ba')
-# annual_filt = signal.filtfilt(b, a, annual_avg)
-# plt.plot(x_ax, annual_avg, 'bo-')
-# plt.plot(x_ax, annual_filt, 'rs-')
-# plt.show()
-
-# Plot low pass and try extracting ACF from low frequency values
-b, a = signal.butter(4, 0.2, 'low', output = 'ba')
-annual_filt = signal.filtfilt(b, a, prec_jjas)
-plt.plot(prec_jjas, 'bo-')
-plt.plot(annual_filt, 'rs-')
+# plotting the trend and seasonality
+plt.plot(trnd, 'b-')
 plt.show()
 
-# ACF of filtered precipitation data
-plt_acf(annual_filt, lims = [1,80], title = "Filtered Response ACF", remove_mean = True)
+plt_acf(trnd)
 
-# Use MA smoothing to remove seasonal variations
+# First order AR model can be built since high correlation exists between t and t - 1
+# Build a regression model with assumptions (say hold true)
+ts0, tsn_1 = scatter_lag(trnd, 1)
+regr = linear_model.LinearRegression(fit_intercept = True)
+regr.fit(tsn_1.reshape([-1,1]), ts0.reshape([-1,1]))
+
+# Calculate error in dataset
+pred = regr.predict(tsn_1.reshape([-1,1]))
+mse = np.sqrt(np.mean((ts0 - pred) ** 2))
+print ("Coefficient", regr.coef_, "Intercept", regr.intercept_, "MSE: ", mse)
+
+ss, ssn_1 = scatter_lag(seas, 1, False)
+mons_pred = pred.flatten() + ss
+
+prec = trnd + seas
+
+pr_ts, prn_1 = scatter_lag(prec, 1, False)
+
+# Calculate error in prediction
+mse = np.sqrt(np.mean((pr_ts - mons_pred) ** 2))
+mape = np.mean(np.absolute(pr_ts - mons_pred))
+
+print("Reseasonalized predictions: MSE = ", mse, "; MAD = ", mape)
+
+plt.plot(pr_ts, 'b-', label = "Actual")
+plt.plot(mons_pred.flatten(), 'r--', label = "Predicted")
+plt.legend()
+plt.show()
