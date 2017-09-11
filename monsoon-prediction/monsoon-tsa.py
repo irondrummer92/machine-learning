@@ -48,7 +48,7 @@ def deseasonalize_ts(ts_data, w_size):
         k+=1
 
     seas_ts = ts_data[(w_size-1):] - trend_ts
-    return trend_ts, seas_ts
+    return trend_ts, seas_ts[1:]
 
 
 # ================ Scatter lag ===================== #
@@ -69,7 +69,7 @@ def scatter_lag(ts_data, lag = 1, plot_scatter = True):
 
 
 # importing some time series data
-f = open("/home/ishwar/workspace/datasets/clim-data/monthly_precip.txt")
+f = open("/home/mudraje/workspace/data/clim-data/monthly_precip.txt")
 
 txt = f.readlines()
 # Time series from 190101 to 201412
@@ -77,6 +77,8 @@ precip_ts = np.array([float(mon.replace("\n","")) for mon in txt])
 
 # Deseasonalize the time series
 trnd, seas = deseasonalize_ts(precip_ts, 12)
+print(seas.shape)
+print(trnd.shape)
 
 # plotting the trend and seasonality
 plt.plot(trnd, 'b-')
@@ -95,10 +97,12 @@ pred = regr.predict(tsn_1.reshape([-1,1]))
 mse = np.sqrt(np.mean((ts0 - pred) ** 2))
 print ("Coefficient", regr.coef_, "Intercept", regr.intercept_, "MSE: ", mse)
 
-ss, ssn_1 = scatter_lag(seas, 1, False)
-mons_pred = pred.flatten() + ss
+# ss, ssn_1 = scatter_lag(seas, 1, False)
+ss = seas.reshape([-1,12]).mean(axis = 0)
+seas = np.tile(ss, int(len(ts0)/12))
 
-prec = trnd + seas
+mons_pred = pred.flatten() + seas
+prec = trnd + np.append(seas, ss[0])
 
 pr_ts, prn_1 = scatter_lag(prec, 1, False)
 
@@ -112,3 +116,10 @@ plt.plot(pr_ts, 'b-', label = "Actual")
 plt.plot(mons_pred.flatten(), 'r--', label = "Predicted")
 plt.legend()
 plt.show()
+
+print pr_ts.shape
+
+# for i in range(len(mons_pred.flatten())):
+#     print("Predicted", mons_pred.flatten()[i], "Actual", pr_ts[i])
+
+
