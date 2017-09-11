@@ -70,56 +70,48 @@ def scatter_lag(ts_data, lag = 1, plot_scatter = True):
 
 # importing some time series data
 f = open("/home/mudraje/workspace/data/clim-data/monthly_precip.txt")
-
 txt = f.readlines()
 # Time series from 190101 to 201412
 precip_ts = np.array([float(mon.replace("\n","")) for mon in txt])
 
-# Deseasonalize the time series
-trnd, seas = deseasonalize_ts(precip_ts, 12)
-print(seas.shape)
-print(trnd.shape)
 
-# plotting the trend and seasonality
-plt.plot(trnd, 'b-')
-plt.show()
+# Years from 1901 to 1990 used for prediction
+# Indices 0 to 90 * 12
+# Indices 90 * 12 : end for testing
+prec_train = precip_ts[:(90*12)]
+prec_test = precip_ts[90*12:]
 
-plt_acf(trnd)
+print "Training Data: " + str(prec_train.shape)
+print "Test Data: " + str(prec_test.shape)
 
-# First order AR model can be built since high correlation exists between t and t - 1
-# Build a regression model with assumptions (say hold true)
-ts0, tsn_1 = scatter_lag(trnd, 1)
+# Deseasonalize for prediction and get monthly average
+train, ss = deseasonalize_ts(prec_train, 12)
+seas = ss.reshape([-1,12]).mean(axis=0)
+
+
+test = prec_test - np.tile(seas, len(prec_test)/12)
+
+train_0, train_1 = scatter_lag(train, 1)
+test_0, test_1 = scatter_lag(test, 1)
+
 regr = linear_model.LinearRegression(fit_intercept = True)
-regr.fit(tsn_1.reshape([-1,1]), ts0.reshape([-1,1]))
+regr.fit(train_0.reshape([-1,1]), train_1.reshape([-1,1]))
 
-# Calculate error in dataset
-pred = regr.predict(tsn_1.reshape([-1,1]))
-mse = np.sqrt(np.mean((ts0 - pred) ** 2))
-print ("Coefficient", regr.coef_, "Intercept", regr.intercept_, "MSE: ", mse)
+print("Coefficient", regr.coef_, "Intercept", regr.intercept_)
 
-# ss, ssn_1 = scatter_lag(seas, 1, False)
-ss = seas.reshape([-1,12]).mean(axis = 0)
-seas = np.tile(ss, int(len(ts0)/12))
+train_pred = regr.predict(train_0.reshape([-1,1])).flatten()
+train_pred += np.tile(seas, len(train_pred)/12)
 
-mons_pred = pred.flatten() + seas
-prec = trnd + np.append(seas, ss[0])
-
-pr_ts, prn_1 = scatter_lag(prec, 1, False)
-
-# Calculate error in prediction
-mse = np.sqrt(np.mean((pr_ts - mons_pred) ** 2))
-mape = np.mean(np.absolute(pr_ts - mons_pred))
-
-print("Reseasonalized predictions: MSE = ", mse, "; MAD = ", mape)
-
-plt.plot(pr_ts, 'b-', label = "Actual")
-plt.plot(mons_pred.flatten(), 'r--', label = "Predicted")
-plt.legend()
+plt.plot(train_pred, 'b-')
+plt.plot(prec_train[12:], 'r--')
 plt.show()
 
-print pr_ts.shape
+test_pred = regr.predict(test.reshape([-1,1])).flatten()
+ss_test = np.tile(seas, len(test_pred)/12)
+ss_test = np.append(ss_test[1:], ss_test[0])
+test_pred += ss_test
 
-# for i in range(len(mons_pred.flatten())):
-#     print("Predicted", mons_pred.flatten()[i], "Actual", pr_ts[i])
+mse_train = np.sqrt(np.mean((train_pred - prec_train[12:])**2))
+mse_test = np.sqrt(np.mean((test_pred[:-1] - prec_test[1:])**2))
 
-
+print("Train Error: ", mse_train, "Test Error", mse_test)
